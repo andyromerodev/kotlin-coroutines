@@ -64,7 +64,7 @@ class PlantListViewModel internal constructor(
      */
     val plants: LiveData<List<Plant>> = growZone.switchMap { growZone ->
         if (growZone == NoGrowZone) {
-            plantRepository.plants
+            plantRepository.plantss
         } else {
             plantRepository.getPlantsWithGrowZone(growZone)
         }
