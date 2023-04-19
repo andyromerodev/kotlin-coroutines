@@ -21,6 +21,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 /**
  * The Data Access Object for the Plant class.
@@ -35,4 +36,14 @@ interface PlantDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(plants: List<Plant>)
+
+    // Query with Flows
+    // Get plants list
+    @Query("SELECT * from plants ORDER BY name")
+    fun getPlantsFlow(): Flow<List<Plant>>
+
+    // Query with Flows
+    // Get plants list by grow zone
+    @Query("SELECT * from plants WHERE growZoneNumber = :growZoneNumber ORDER BY name")
+    fun getPlantsWithGrowZoneNumberFlow(growZoneNumber: Int): Flow<List<Plant>>
 }
