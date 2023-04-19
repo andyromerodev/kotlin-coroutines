@@ -25,7 +25,7 @@ import com.example.android.advancedcoroutines.util.CacheOnSuccess
 import com.example.android.advancedcoroutines.utils.ComparablePair
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 /**
@@ -91,10 +91,16 @@ class PlantRepository private constructor(
             this@applyMainSafeSort.applySort(customSortOrder)
         }
 
+    // private val customSortFlow = flow { emit(plantsListSortOrderCache.getOrAwait()) }
+
+    // Create a flow that calls a single function
+    private val customSortFlow = plantsListSortOrderCache::getOrAwait.asFlow()
 
     // Get plants list with flow
     val plantsFlow: Flow<List<Plant>>
-        get() = plantDao.getPlantsFlow()
+        get() = plantDao.getPlantsFlow().combine(customSortFlow){ plants, sortOrder ->
+            plants.applySort(sortOrder)
+        }.flowOn(defaultDispatcher).conflate()
 
     // Get plants list by grow zone with flow
     fun getPlantsWithGrowZoneFlow(growZoneNumber: GrowZone): Flow<List<Plant>> {
