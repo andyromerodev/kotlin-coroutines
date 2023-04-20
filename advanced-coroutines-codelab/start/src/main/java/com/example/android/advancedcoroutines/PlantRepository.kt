@@ -26,6 +26,7 @@ import com.example.android.advancedcoroutines.utils.ComparablePair
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 /**
@@ -54,6 +55,8 @@ class PlantRepository private constructor(
             plantService.customPlantSortOrder()
         }
 
+    // Create a flow that calls a single function
+    // private val customSortFlow = plantsListSortOrderCache::getOrAwait.asFlow()
 
     private fun List<Plant>.applySort(customSortOrder: List<String>): List<Plant> {
         return sortedBy {plant ->
@@ -91,6 +94,7 @@ class PlantRepository private constructor(
             this@applyMainSafeSort.applySort(customSortOrder)
         }
 
+    private val customSortFlow = flow { emit(plantsListSortOrderCache.getOrAwait()) }
 
     // Get plants list with flow
     val plantsFlow: Flow<List<Plant>>
